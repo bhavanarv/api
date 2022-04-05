@@ -1,0 +1,4901 @@
+{
+	"info": {
+		"_postman_id": "d0bbee75-6656-4c99-8c30-06522b5df0ed",
+		"name": "2.APIs_Env",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "startup",
+			"item": [
+				{
+					"name": "WebSite",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"x-token\",pm.cookies.get(\"uidt\") ?? \"\");\r",
+									"pm.environment.set(\"asc\", pm.cookies.get(\"asc\") ?? \"\");\r",
+									"pm.environment.set(\"Oun\", pm.cookies.get(\"Oun\") ?? \"\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{website}}",
+							"host": [
+								"{{website}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ItemService",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set('ITEMS', \"/items\");\r",
+									"pm.variables.set('Oun',pm.environment.get(\"Oun\").slice(0,4));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if(pm.collectionVariables.get('ISJSON'))\r",
+									"{\r",
+									"    var json = pm.response.json();\r",
+									"    pm.environment.set(\"temp_ProductId\", json[pm.environment.get(\"itemNumber\")]?.product.omniItemId);\r",
+									"    pm.variables.set('Oun',pm.environment.get(\"Oun\"));\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"omniItemIds\": [\n        {\n            \"omniItemId\": \"{{itemNumber}}\",\n            \"qty\": 1\n        }\n    ],\n    \"storeNumber\": {{Oun}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}{{ITEMS}}/v1",
+							"host": [
+								"{{BaseUrl}}{{ITEMS}}"
+							],
+							"path": [
+								"v1"
+							]
+						},
+						"description": "https://alccccdevapim01.azure-api.net/items/?invClientType=sourcing&itemNumber=100001&offset=0"
+					},
+					"response": []
+				},
+				{
+					"name": "GetCurrentUser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if(pm.collectionVariables.get('ISJSON')){\r",
+									"    var json = pm.response.json();\r",
+									"    pm.environment.set(\"temp_customerNumber\", json.AccountNumber);\r",
+									"    pm.environment.set(\"temp_customerEmail\", json.Email);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-token",
+								"value": "{{x-token}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "store",
+								"value": "{{Oun}}",
+								"type": "text"
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}{{USER}}/GetCurrentUser",
+							"host": [
+								"{{BaseUrl}}{{USER}}"
+							],
+							"path": [
+								"GetCurrentUser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddToCart",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if(pm.collectionVariables.get('ISJSON')){\r",
+									"    pm.environment.set(\"temp_cartLineId\", pm.response.json().cartItems[0]?.cartLineId);\r",
+									"    pm.environment.set(\"asc\", pm.response.json().cartId);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-token",
+								"value": "{{x-token}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "asc",
+								"value": "{{asc}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "store",
+								"value": "{{Oun}}",
+								"type": "text"
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": "true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"cartItems\": [\r\n        {\r\n            \"productInfo\": {\r\n                \"itemType\": \"\",\r\n                \"omniItemId\": \"{{temp_ProductId}}\",\r\n                \"collectionId\": \"\"\r\n                // \"colorCode\": \"6092-31\",\r\n                // \"colorName\": \"Cane Sugar\",\r\n                // \"colorShade\": \"rgb(244,223,177)\"\r\n            },\r\n            \"quantity\": 1\r\n        }\r\n    ],\r\n    \"zippedInStore\": {\r\n        \"storeId\": \"{{Oun}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}{{CARTCOMP}}/addtocart?omi=5637148840",
+							"host": [
+								"{{BaseUrl}}{{CARTCOMP}}"
+							],
+							"path": [
+								"addtocart"
+							],
+							"query": [
+								{
+									"key": "omi",
+									"value": "5637148840"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "Shipping",
+					"item": [
+						{
+							"name": "ChangePostalCode",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-token",
+										"value": "{{x-token}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "asc",
+										"value": "{{asc}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "storeId",
+										"value": "{{Oun}}",
+										"type": "text"
+									},
+									{
+										"key": "Ocp-Apim-Subscription-Key",
+										"value": "{{SubscriptionKey}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Ocp-Apim-Trace",
+										"value": " true",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Authorization",
+										"value": "{{AUTH_TOKEN}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Host",
+										"value": "{{Host}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"ZipCode\":\"M6B 4B3\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}{{CARTITEMCOMP}}/ChangePostalCode",
+									"host": [
+										"{{BaseUrl}}{{CARTITEMCOMP}}"
+									],
+									"path": [
+										"ChangePostalCode"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetAddressByZipcode",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "store",
+										"value": "{{Oun}}",
+										"type": "text"
+									},
+									{
+										"key": "Ocp-Apim-Subscription-Key",
+										"value": "{{SubscriptionKey}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Ocp-Apim-Trace",
+										"value": " true",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Authorization",
+										"value": "{{AUTH_TOKEN}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Host",
+										"value": "{{Host}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Zipcode\": \"M6B 4B3\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}{{CARTS}}/GetAddressByZipcode",
+									"host": [
+										"{{BaseUrl}}{{CARTS}}"
+									],
+									"path": [
+										"GetAddressByZipcode"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "SetShippingMethod",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var isLocal = pm.environment.name == \"lowes.ca | local\";\r",
+											"var asc = pm.environment.get(\"asc\");\r",
+											"var lineId = pm.environment.get(\"temp_cartLineId\");\r",
+											"pm.globals.set('apiurl', (isLocal ? `SetShippingMethod?cartId=${asc}&cartItemId=${temp_cartLineId}` : `carts/${asc}/cartItems/${lineId}/fulfillment`));"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "store",
+										"value": "{{Oun}}",
+										"type": "text"
+									},
+									{
+										"key": "x-token",
+										"value": "{{x-token}}",
+										"type": "text"
+									},
+									{
+										"key": "asc",
+										"value": "{{asc}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Ocp-Apim-Subscription-Key",
+										"value": "{{SubscriptionKey}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Ocp-Apim-Trace",
+										"value": "true",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Authorization",
+										"value": "{{AUTH_TOKEN}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Host",
+										"value": "{{Host}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"fulfillmentOption\":\"PARCEL-ON\",\r\n    \"shippingAddress\": {\r\n        \"city\": \"VICTORIA\",\r\n        \"state\": \"BC\",\r\n        \"country\": \"CAN\",\r\n        \"zipPostalCode\": \"V9B 2P3\",\r\n        \"isValid\": true,\r\n        \"isComplete\": false\r\n    },\r\n    \"storeAddress\": {\r\n        \"userProfileAddressId\": \"00000000-0000-0000-0000-000000000000\",\r\n        \"countryCode\": null,\r\n        \"eveningPhoneNumber\": null,\r\n        \"faxNumber\": null,\r\n        \"name\": \"LOWE'S OF NE HAMILTON, ON\",\r\n        \"regionCode\": null,\r\n        \"regionName\": null,\r\n        \"partyId\": \"2413\",\r\n        \"firstName\": null,\r\n        \"lastName\": null,\r\n        \"email\": null,\r\n        \"company\": null,\r\n        \"address1\": \"1945 BARTON STREET\",\r\n        \"address2\": \"\",\r\n        \"city\": \"Hamilton\",\r\n        \"state\": \"ON\",\r\n        \"country\": \"CAN\",\r\n        \"phoneNumber\": \"(905) 312-5670\",\r\n        \"isPrimary\": false,\r\n        \"externalId\": \"2413\",\r\n        \"properties\": []\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}{{CARTITEMCOMP}}/{{apiurl}}?cartid={{asc}}&cartitemid={{temp_cartLineId}}",
+									"host": [
+										"{{BaseUrl}}{{CARTITEMCOMP}}"
+									],
+									"path": [
+										"{{apiurl}}"
+									],
+									"query": [
+										{
+											"key": "cartid",
+											"value": "{{asc}}"
+										},
+										{
+											"key": "cartitemid",
+											"value": "{{temp_cartLineId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "SetShippingMethods",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var isLocal = pm.environment.name == \"lowes.ca | local\";\r",
+											"var asc = pm.environment.get(\"asc\");\r",
+											"var lineId = pm.environment.get(\"temp_cartLineId\");\r",
+											"pm.globals.set('apiurl', (isLocal ? `SetShippingMethod?cartId=${asc}&cartItemId=${temp_cartLineId}` : `carts/${asc}/shippingaddress`));"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "store",
+										"value": "{{Oun}}",
+										"type": "text"
+									},
+									{
+										"key": "x-token",
+										"value": "{{x-token}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "asc",
+										"value": "{{asc}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Ocp-Apim-Subscription-Key",
+										"value": "{{SubscriptionKey}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Ocp-Apim-Trace",
+										"value": "true",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Authorization",
+										"value": "{{AUTH_TOKEN}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Host",
+										"value": "{{Host}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"shippingmethods\": [\r\n        {\r\n            \"fulfillmentOption\": \"PARCEL-ON\",\r\n            \"externalCartLineId\": \"{{temp_cartLineId}}\"\r\n        }\r\n    ],\r\n    \"shippingAddress\": {\r\n        \"city\": \"VICTORIA\",\r\n        \"state\": \"BC\",\r\n        \"country\": \"CAN\",\r\n        \"zipPostalCode\": \"V9B 2P3\",\r\n        \"isValid\": true,\r\n        \"isComplete\": false\r\n    },\r\n    \"storeAddress\": {\r\n        \"userProfileAddressId\": \"00000000-0000-0000-0000-000000000000\",\r\n        \"countryCode\": null,\r\n        \"eveningPhoneNumber\": null,\r\n        \"faxNumber\": null,\r\n        \"name\": \"LOWE'S OF NE HAMILTON, ON\",\r\n        \"regionCode\": null,\r\n        \"regionName\": null,\r\n        \"partyId\": \"2413\",\r\n        \"firstName\": null,\r\n        \"lastName\": null,\r\n        \"email\": null,\r\n        \"company\": null,\r\n        \"address1\": \"1945 BARTON STREET\",\r\n        \"address2\": \"\",\r\n        \"city\": \"Hamilton\",\r\n        \"state\": \"ON\",\r\n        \"country\": \"CAN\",\r\n        \"phoneNumber\": \"(905) 312-5670\",\r\n        \"isPrimary\": false,\r\n        \"externalId\": \"2413\",\r\n        \"properties\": []\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}{{CARTITEMCOMP}}/{{apiurl}}",
+									"host": [
+										"{{BaseUrl}}{{CARTITEMCOMP}}"
+									],
+									"path": [
+										"{{apiurl}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Transaction",
+					"item": [
+						{
+							"name": "ViewCart",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var isLocal = pm.environment.name == \"lowes.ca | local\";\r",
+											"pm.globals.set('apiurl', (isLocal ? \"viewcart\" : \"\"));"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if(pm.collectionVariables.get('ISJSON')){\r",
+											"    pm.environment.set(\"temp_cartLineId\", pm.response.json().cartItems[0]?.cartLineId);\r",
+											"    pm.environment.set(\"asc\", pm.response.json().cartId);\r",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-token",
+										"value": "{{x-token}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "asc",
+										"value": "{{asc}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "store",
+										"value": "{{Oun}}",
+										"type": "text"
+									},
+									{
+										"key": "Ocp-Apim-Subscription-Key",
+										"value": "{{SubscriptionKey}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Ocp-Apim-Trace",
+										"value": "true",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Authorization",
+										"value": "{{AUTH_TOKEN}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Host",
+										"value": "{{Host}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{BaseUrl}}{{CART}}/{{apiurl}}",
+									"host": [
+										"{{BaseUrl}}{{CART}}"
+									],
+									"path": [
+										"{{apiurl}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "MiniCart",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-token",
+										"value": "{{x-token}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "asc",
+										"value": "{{asc}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "store",
+										"value": "{{Oun}}",
+										"type": "text"
+									},
+									{
+										"key": "Ocp-Apim-Subscription-Key",
+										"value": "{{SubscriptionKey}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Ocp-Apim-Trace",
+										"value": "true",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Authorization",
+										"value": "{{AUTH_TOKEN}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Host",
+										"value": "{{Host}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{BaseUrl}}{{CARTS}}/minicart",
+									"host": [
+										"{{BaseUrl}}{{CARTS}}"
+									],
+									"path": [
+										"minicart"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateCartItemAQ",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var isLocal = pm.environment.name == \"lowes.ca | local\";\r",
+											"var asc = pm.environment.get(\"asc\");\r",
+											"var lineId = pm.environment.get(\"temp_cartLineId\")\r",
+											"pm.globals.set('apiurl', (isLocal ? \"updatecartitem\" : `${asc}/cartitems/${lineId}/assembly`));"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "x-token",
+										"value": "{{x-token}}",
+										"disabled": true
+									},
+									{
+										"key": "asc",
+										"value": "{{asc}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "store",
+										"value": "{{Oun}}",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{AUTH_TOKEN}}",
+										"disabled": true
+									},
+									{
+										"key": "Host",
+										"value": "{{Host}}",
+										"disabled": true
+									},
+									{
+										"key": "Ocp-Apim-Trace",
+										"value": "true",
+										"disabled": true
+									},
+									{
+										"key": "Ocp-Apim-Subscription-Key",
+										"value": "{{SubscriptionKey}}",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"cartLineId\": \"{{temp_cartLineId}}\",\n    \"quantity\": 4,\n    \"requestedAssembly\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}{{CARTS}}/{{apiurl}}",
+									"host": [
+										"{{BaseUrl}}{{CARTS}}"
+									],
+									"path": [
+										"{{apiurl}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "AddToCart",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if(pm.collectionVariables.get('ISJSON')){\r",
+											"    pm.environment.set(\"temp_cartLineId\", pm.response.json().cartItems[0]?.cartLineId);\r",
+											"    pm.environment.set(\"asc\", pm.response.json().cartId);\r",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-token",
+										"value": "{{x-token}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "asc",
+										"value": "{{asc}}",
+										"type": "text"
+									},
+									{
+										"key": "store",
+										"value": "{{Oun}}",
+										"type": "text"
+									},
+									{
+										"key": "Ocp-Apim-Subscription-Key",
+										"value": "{{SubscriptionKey}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Ocp-Apim-Trace",
+										"value": "true",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Authorization",
+										"value": "{{AUTH_TOKEN}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Host",
+										"value": "{{Host}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"cartItems\": [\r\n        {\r\n            \"productInfo\": {\r\n                \"itemType\": \"\",\r\n                \"omniItemId\": \"{{temp_ProductId}}\",\r\n                \"collectionId\": \"\"\r\n            },\r\n            \"quantity\": \"1\",\r\n            \"requestedAssembly\": null\r\n        }\r\n    ],\r\n    \"zippedInStore\": {\r\n        \"storeId\": \"2413OL\"\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}{{CARTCOMP}}/addtocart?omi=5637148840",
+									"host": [
+										"{{BaseUrl}}{{CARTCOMP}}"
+									],
+									"path": [
+										"addtocart"
+									],
+									"query": [
+										{
+											"key": "omi",
+											"value": "5637148840"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "reloadCart",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"newStoreId\",\"3702OL\");\r",
+											"\r",
+											"var isLocal = pm.environment.name == \"lowes.ca | local\";\r",
+											"var asc = pm.environment.get(\"asc\");\r",
+											"var lineId = pm.environment.get(\"temp_cartLineId\")\r",
+											"pm.globals.set('apiurl', (isLocal ? `reloadCart` : `cart`));"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if(pm.collectionVariables.get('ISJSON') && pm.response.code == 200)\r",
+											"{ \r",
+											"    pm.environment.set(\"Oun\",pm.variables.get(\"newStoreId\"));\r",
+											"    pm.environment.set(\"asc\",pm.response.json().updatedCartId);\r",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Ocp-Apim-Subscription-Key",
+										"value": "{{SubscriptionKey}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Ocp-Apim-Trace",
+										"value": " true",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Authorization",
+										"value": "{{AUTH_TOKEN}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Host",
+										"value": "{{Host}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"newStoreId\": \"{{newStoreId}}\", //check pre-request\r\n    \"oldStoreId\": \"{{Oun}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}{{CARTCOMP}}/{{apiurl}}",
+									"host": [
+										"{{BaseUrl}}{{CARTCOMP}}"
+									],
+									"path": [
+										"{{apiurl}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Discount",
+					"item": [
+						{
+							"name": "ApplyDiscount",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-token",
+										"value": "{{x-token}}",
+										"type": "text"
+									},
+									{
+										"key": "asc",
+										"value": "{{asc}}",
+										"type": "text"
+									},
+									{
+										"key": "store",
+										"value": "{{Oun}}",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{AUTH_TOKEN}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Host",
+										"value": "{{Host}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Ocp-Apim-Trace",
+										"value": "true",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Ocp-Apim-Subscription-Key",
+										"value": "{{SubscriptionKey}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"promoCodes\": [\r\n        \"SMOKE\"\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}{{CARTS}}/ApplyDiscount",
+									"host": [
+										"{{BaseUrl}}{{CARTS}}"
+									],
+									"path": [
+										"ApplyDiscount"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "RemoveDiscount",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-token",
+										"value": "{{x-token}}",
+										"type": "text"
+									},
+									{
+										"key": "asc",
+										"value": "{{asc}}",
+										"type": "text"
+									},
+									{
+										"key": "store",
+										"value": "{{Oun}}",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{AUTH_TOKEN}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Host",
+										"value": "{{Host}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Ocp-Apim-Trace",
+										"value": "true",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Ocp-Apim-Subscription-Key",
+										"value": "{{SubscriptionKey}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"promoCodes\": [\r\n        \"SMOKE\"\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}{{CARTS}}/RemoveDiscount",
+									"host": [
+										"{{BaseUrl}}{{CARTS}}"
+									],
+									"path": [
+										"RemoveDiscount"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "removeCartItem",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var isLocal = pm.environment.name == \"lowes.ca | local\";\r",
+									"var asc = pm.environment.get(\"asc\");\r",
+									"var lineId = pm.environment.get(\"temp_cartLineId\")\r",
+									"pm.globals.set('apiurl', (isLocal ? `removeCartItem?cartid=${asc}&cartitemids=${lineId}` : `minicart/${asc}/cartitems/${lineId}`));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-token",
+								"value": "{{x-token}}",
+								"type": "text"
+							},
+							{
+								"key": "asc",
+								"value": "{{asc}}",
+								"type": "text"
+							},
+							{
+								"key": "store",
+								"value": "{{Oun}}",
+								"type": "text"
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": "true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}{{CARTS}}/{{apiurl}}",
+							"host": [
+								"{{BaseUrl}}{{CARTS}}"
+							],
+							"path": [
+								"{{apiurl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCurrentUser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if(pm.collectionVariables.get('ISJSON')){\r",
+									"    var json = pm.response.json();\r",
+									"    pm.environment.set(\"temp_customerNumber\", json.AccountNumber);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-token",
+								"value": "{{x-token}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "store",
+								"value": "{{Oun}}",
+								"type": "text"
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}{{USER}}/GetCurrentUser",
+							"host": [
+								"{{BaseUrl}}{{USER}}"
+							],
+							"path": [
+								"GetCurrentUser"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "WishList",
+			"item": [
+				{
+					"name": "CreateWishlist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var json = JSON.parse(responseBody);\r",
+									"pm.environment.set(\"temp_wishlistId\", json.Id);\r",
+									"pm.environment.set(\"temp_wishlistName\", json.Name);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-token",
+								"value": "{{x-token}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "store",
+								"value": "{{Oun}}",
+								"type": "text"
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"CustomerId\": \"{{temp_customerNumber}}\",\r\n    \"Name\": \"dhirajtest_{{$timestamp}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/{{USERLIST}}/CreateWishlist",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"{{USERLIST}}",
+								"CreateWishlist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddProductToWishlists",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if(pm.collectionVariables.get('ISJSON')){\r",
+									"    var json = JSON.parse(responseBody);\r",
+									"    pm.environment.set(\"temp_wishlistLineId\", json[0]?.CommerceListLines[0]?.LineId);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-token",
+								"value": "{{x-token}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "store",
+								"value": "{{Oun}}",
+								"type": "text"
+							},
+							{
+								"key": "userId",
+								"value": "{{temp_customerNumber}}",
+								"type": "text"
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": "true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[{\r\n    \"ProductCatalog\": \"{{temp_wishlistName}}\", \r\n    \"ProductId\": \"{{temp_ProductId}}\",\r\n    \"Quantity\": 1,\r\n    \"WishListId\": \"{{temp_wishlistId}}\",\r\n    \"WishListName\": \"{{temp_wishlistName}}\",\r\n    \"isProductTagged\": true\r\n}]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/{{USERLIST}}/AddProductToWishlists",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"{{USERLIST}}",
+								"AddProductToWishlists"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MoveProductToWishlist",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "userId",
+								"value": "{{temp_customerNumber}}",
+								"type": "text"
+							},
+							{
+								"key": "x-token",
+								"value": "{{x-token}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "store",
+								"value": "{{Oun}}",
+								"type": "text"
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": "true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"wishListExternalId\": \"{{temp_wishlistId}}\",\n    \"wishlistItemLineId\": \"{{temp_wishlistLineId}}\",\n    \"AddProductToWishlists\": [\n        {\n            \"ProductId\": \"{{temp_ProductId}}\",\n            \"ProductCatalog\": \"{{temp_wishlistName}}\",\n            \"Quantity\": 1,\n            \"WishListId\": \"{{temp_wishlistId}}\",\n            \"WishListName\": \"{{temp_wishlistName}}\",\n            \"isProductTagged\": true\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/{{USERLIST}}/MoveProductToWishlist",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"{{USERLIST}}",
+								"MoveProductToWishlist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetWishlist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var json = JSON.parse(responseBody);\r",
+									"pm.environment.set(\"temp_wishlistId\", json.Id);\r",
+									"pm.environment.set(\"temp_wishlistName\", json.Name);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-token",
+								"value": " {{x-token}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "store",
+								"value": "{{Oun}}",
+								"type": "text"
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}/{{USERLIST}}/GetWishlist?ExternalId={{temp_wishlistId}}",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"{{USERLIST}}",
+								"GetWishlist"
+							],
+							"query": [
+								{
+									"key": "ExternalId",
+									"value": "{{temp_wishlistId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetWishlistProducts",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-token",
+								"value": "{{x-token}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "store",
+								"value": "{{Oun}}",
+								"type": "text"
+							},
+							{
+								"key": "productid",
+								"value": "{{temp_ProductId}}",
+								"type": "text"
+							},
+							{
+								"key": "userId",
+								"value": "{{temp_customerNumber}}",
+								"type": "text"
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": "true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}{{USERLIST}}/GetWishlistProducts",
+							"host": [
+								"{{BaseUrl}}{{USERLIST}}"
+							],
+							"path": [
+								"GetWishlistProducts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetActiveWishlistsAndProducts",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-token",
+								"value": "{{x-token}}",
+								"disabled": true
+							},
+							{
+								"key": "userId",
+								"value": "{{temp_customerNumber}}"
+							},
+							{
+								"key": "store",
+								"value": "{{Oun}}"
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "d4a2f1ac5f454c8cbe8b1f0149c46482",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": "true",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "wwwstage.lowesnp.ca",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiIxZjc5Yzk2YS0wZDljLTQ3YTQtOTM0MS1lYWJkNjUwNDUyNzgiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9mMGY3MDVmZi0zZDNlLTRjMjQtODU0Yy02ZDBiMjBiMmIxMGMvIiwiaWF0IjoxNjE0MDgxNzgyLCJuYmYiOjE2MTQwODE3ODIsImV4cCI6MTYxNDA4NTY4MiwiYWlvIjoiRTJaZ1lJaE05MkxyZUQ1MVNwR1k3RFltMzNXckFBPT0iLCJhcHBpZCI6IjkxODM1Nzg4LWE4NmQtNGFlOS04M2FmLTc0NzIyMzJkZTI3NCIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0L2YwZjcwNWZmLTNkM2UtNGMyNC04NTRjLTZkMGIyMGIyYjEwYy8iLCJvaWQiOiJmMDgxMzE3Yi01NmU2LTQwMjQtYjMyMC01ZTY0NGUzZGY4M2IiLCJyaCI6IjAuQUFBQV93WDM4RDQ5SkV5RlRHMExJTEt4REloWGc1RnRxT2xLZzY5MGNpTXQ0blFTQUFBLiIsInN1YiI6ImYwODEzMTdiLTU2ZTYtNDAyNC1iMzIwLTVlNjQ0ZTNkZjgzYiIsInRpZCI6ImYwZjcwNWZmLTNkM2UtNGMyNC04NTRjLTZkMGIyMGIyYjEwYyIsInV0aSI6IkVKQkQtaXJiU1V5RFBmb0sxSTR6QUEiLCJ2ZXIiOiIxLjAifQ.T154XZAlsS5fMOw75O6qt-BOTRHvPB4TnLhWbOiIy0KBiWbQV5VtLFQR8s4ibfvfk9-jNDQ6XnHTbrgpcHfTB5McWSA87-Qhk6chCAC6izu2gGxpfIsrx_AtDFIh4BX5Ez_U85lNdFCMMg2aUAtXA3SnwPDYo-iWEfk4FLelptF2WoIEitfSURFp1aqd91fDo8otO_BXn6ZLAN5giHRiOUiURkaoUIgCTrgA6CVVVMlfCr0n1pHUESM7xjRnufADpYegtqARJxeN5nBUoX3STP96P2hRvWOLc0FdiYHLzkiWRzN42p_8Fe9PKVWxKk560FnhFiYRofoaQ7Rq2CSfew",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}{{USERLIST}}/GetActiveWishlistsAndProducts",
+							"host": [
+								"{{BaseUrl}}{{USERLIST}}"
+							],
+							"path": [
+								"GetActiveWishlistsAndProducts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteWishlistLines",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-token",
+								"value": "{{x-token}}",
+								"disabled": true
+							},
+							{
+								"key": "store",
+								"value": "{{Oun}}"
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": "true",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"wishlistId\": \"{{temp_wishlistId}}\",\n    \"RemoveLines\": [\n        {\n            \"CommerceListId\": \"{{temp_wishlistId}}\",\n            \"LineId\": \"{{temp}}\",\n            \"CustomerId\": \"{{temp_customerNumber}}\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/DeleteWishlistLines",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"DeleteWishlistLines"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteWishlist",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "store",
+								"value": "{{Oun}}"
+							},
+							{
+								"key": "x-token",
+								"value": "{{x-token}}",
+								"disabled": true
+							},
+							{
+								"key": "wishlistId",
+								"value": "{{temp_wishlistId}}"
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": "true",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\n        \"CustomerId\":\"{{temp_customerNumber}}\",\n        \"Name\":\"{{temp_wishlistName}}\"\n    }   ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}{{USERLIST}}/DeleteWishlist",
+							"host": [
+								"{{BaseUrl}}{{USERLIST}}"
+							],
+							"path": [
+								"DeleteWishlist"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Search",
+			"item": [
+				{
+					"name": "typeahead",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}{{SEARCH}}/typeahead?maxProducts=10&site=LOWES&searchTerm=refr&store=2413OL",
+							"host": [
+								"{{BaseUrl}}{{SEARCH}}"
+							],
+							"path": [
+								"typeahead"
+							],
+							"query": [
+								{
+									"key": "maxProducts",
+									"value": "10"
+								},
+								{
+									"key": "site",
+									"value": "LOWES"
+								},
+								{
+									"key": "searchTerm",
+									"value": "refr"
+								},
+								{
+									"key": "store",
+									"value": "2413OL"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Autocomplete",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}{{SEARCH}}/autocomplete?channelType=DESKTOP&maxTerms=10&searchTerm=test&site=LOWES",
+							"host": [
+								"{{BaseUrl}}{{SEARCH}}"
+							],
+							"path": [
+								"autocomplete"
+							],
+							"query": [
+								{
+									"key": "channelType",
+									"value": "DESKTOP"
+								},
+								{
+									"key": "maxTerms",
+									"value": "10"
+								},
+								{
+									"key": "searchTerm",
+									"value": "test"
+								},
+								{
+									"key": "site",
+									"value": "LOWES"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Item",
+			"item": [
+				{
+					"name": "BackInStock",
+					"item": [
+						{
+							"name": "BackInStock",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var isLocal = pm.environment.name == \"lowes.ca | local\";\r",
+											"pm.globals.set('apiurl', (isLocal ? \"NotifyWhenBackInStock\" : \"notification\"));"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Ocp-Apim-Subscription-Key",
+										"value": "{{SubscriptionKey}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Ocp-Apim-Trace",
+										"value": " true",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Authorization",
+										"value": "{{AUTH_TOKEN}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Host",
+										"value": "{{Host}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"firstName\":\"\",\r\n    \"email\":\"testing_lowes@lowes.com\",\r\n    \"omniItemId\":\"{{temp_ProductId}}\",\r\n    \"description\":\"Golden Elite Linen Cabinet - 69\\\" - Dark Oak\",\r\n    \"imageURL\":\"https://da.lowesnp.ca/webassets/images/30000449_MainImage_001.jpg\",\r\n    \"pdURL\":\"https://wwwstage.lowesnp.ca/product/bathroom-wall-cabinets/golden-elite-linen-cabinet-69-dark-oak-{{itemNumber}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}{{BACKINSTOCK}}/{{apiurl}}",
+									"host": [
+										"{{BaseUrl}}{{BACKINSTOCK}}"
+									],
+									"path": [
+										"{{apiurl}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "BackInStock Copy",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var isLocal = pm.environment.name == \"lowes.ca | local\";\r",
+											"pm.globals.set('apiurl', (isLocal ? \"NotifyWhenBackInStock\" : \"notification\"));"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Ocp-Apim-Subscription-Key",
+										"value": "{{SubscriptionKey}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Ocp-Apim-Trace",
+										"value": " true",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Authorization",
+										"value": "{{AUTH_TOKEN}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Host",
+										"value": "{{Host}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"firstName\":\"\",\r\n    \"email\":\"testing_lowes@lowes.com\",\r\n    \"omniItemId\":\"{{temp_ProductId}}\",\r\n    \"description\":\"Golden Elite Linen Cabinet - 69\\\" - Dark Oak\",\r\n    \"imageURL\":\"https://da.lowesnp.ca/webassets/images/30000449_MainImage_001.jpg\",\r\n    \"pdURL\":\"https://wwwstage.lowesnp.ca/product/bathroom-wall-cabinets/golden-elite-linen-cabinet-69-dark-oak-{{itemNumber}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}{{BACKINSTOCK}}/{{apiurl}}",
+									"host": [
+										"{{BaseUrl}}{{BACKINSTOCK}}"
+									],
+									"path": [
+										"{{apiurl}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "ItemService",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set('ITEMS', \"/items\");\r",
+									"pm.variables.set('Oun',pm.environment.get(\"Oun\").slice(0,4));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if(pm.collectionVariables.get('ISJSON'))\r",
+									"{\r",
+									"    var json = pm.response.json();\r",
+									"    pm.environment.set(\"temp_ProductId\", json[pm.environment.get(\"itemNumber\")]?.product.omniItemId);\r",
+									"    pm.variables.set('Oun',pm.environment.get(\"Oun\"));\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"omniItemIds\": [\n        {\n            \"omniItemId\": \"698421\",\n            \"qty\": 1\n        }\n    ],\n    \"storeNumber\": {{Oun}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}{{ITEMS}}",
+							"host": [
+								"{{BaseUrl}}{{ITEMS}}"
+							]
+						},
+						"description": "https://alccccdevapim01.azure-api.net/items/?invClientType=sourcing&itemNumber=100001&offset=0"
+					},
+					"response": []
+				},
+				{
+					"name": "CategoryById",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set('ITEMS', \"/items\");\r",
+									"pm.variables.set('Oun',pm.environment.get(\"Oun\").slice(0,4));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if(pm.collectionVariables.get('ISJSON'))\r",
+									"{\r",
+									"    var json = pm.response.json();\r",
+									"    pm.environment.set(\"temp_ProductId\", json[pm.environment.get(\"itemNumber\")]?.product.omniItemId);\r",
+									"    pm.variables.set('Oun',pm.environment.get(\"Oun\"));\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}{{TAXONOMY}}/categories/A2",
+							"host": [
+								"{{BaseUrl}}{{TAXONOMY}}"
+							],
+							"path": [
+								"categories",
+								"A2"
+							]
+						},
+						"description": "https://alccccdevapim01.azure-api.net/items/?invClientType=sourcing&itemNumber=100001&offset=0"
+					},
+					"response": []
+				},
+				{
+					"name": "ItemServicev1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if(pm.collectionVariables.get('ISJSON'))\r",
+									"{\r",
+									"    var json = pm.response.json();\r",
+									"    pm.environment.set(\"temp_ProductId\", json[pm.environment.get(\"itemNumber\")]?.product.omniItemId);\r",
+									"    pm.variables.set('Oun',pm.environment.get(\"Oun\"));\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set('ITEMS', \"/items\");\r",
+									"pm.variables.set('Oun',pm.environment.get(\"Oun\").slice(0,4));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"omniItemIds\": [\n        {\n            \"omniItemId\": \"{{itemNumber}}\",\n            \"qty\": 1\n        }\n    ],\n    \"storeNumber\": \"2413\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}{{ITEMS}}/v1",
+							"host": [
+								"{{BaseUrl}}{{ITEMS}}"
+							],
+							"path": [
+								"v1"
+							]
+						},
+						"description": "https://alccccdevapim01.azure-api.net/items/?invClientType=sourcing&itemNumber=100001&offset=0"
+					},
+					"response": []
+				},
+				{
+					"name": "Deliverycharge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if(pm.collectionVariables.get('ISJSON'))\r",
+									"{\r",
+									"    var json = pm.response.json();\r",
+									"    pm.environment.set(\"temp_ProductId\", json[pm.environment.get(\"itemNumber\")]?.product.omniItemId);\r",
+									"    pm.variables.set('Oun',pm.environment.get(\"Oun\"));\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set('ITEMS', \"/items\");\r",
+									"pm.variables.set('Oun',pm.environment.get(\"Oun\").slice(0,4));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"sourceChannel\": \"LOWES\",\n    \"isProOrder\": false,\n    \"address\": {\n        \"addressId\": \"159161769822220983247\",\n        \"addressLine1\": \"2700 Rainier Ave South\",\n        \"addressLine2\": null,\n        \"city\": \"Seattle\",\n        \"jurCode\": null,\n        \"postalCode\": \"98144\",\n        \"countryCode\": \"US\"\n    },\n    \"locations\": [\n        {\n            \"fulfillmentNode\": 8544,\n            \"resourceType\": \"Box Truck\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/edpdelchrgsrv/delivery-charge",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"edpdelchrgsrv",
+								"delivery-charge"
+							]
+						},
+						"description": "https://alccccdevapim01.azure-api.net/items/?invClientType=sourcing&itemNumber=100001&offset=0"
+					},
+					"response": []
+				},
+				{
+					"name": "shippingcharge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if(pm.collectionVariables.get('ISJSON'))\r",
+									"{\r",
+									"    var json = pm.response.json();\r",
+									"    pm.environment.set(\"temp_ProductId\", json[pm.environment.get(\"itemNumber\")]?.product.omniItemId);\r",
+									"    pm.variables.set('Oun',pm.environment.get(\"Oun\"));\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set('ITEMS', \"/items\");\r",
+									"pm.variables.set('Oun',pm.environment.get(\"Oun\").slice(0,4));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"trackingIdc\": \"6640540130920571215\",\n    \"auditUser\": \"LOWES\",\n    \"shipToAddress\": [\n        {\n            \"addressId\": \"a4cff964-2cf2-4d7d-aeb9-c5f835490f18\",\n            \"addressLine1\": \"509 River Highway\",\n            \"addressLine2\": null,\n            \"city\": \"Mooresville\",\n            \"jurCode\": \"NC\",\n            \"postalCode\": \"28117\",\n            \"countryCode\": \"US\",\n            \"itemList\": [\n                {\n                    \"orderLineId\": \"56209a85-7dcf-4c76-a331-449265ed1518\",\n                    \"itemNbr\": \"59983\",\n                    \"modelId\": \"ALLOC-JUSTFORMOM\",\n                    \"vbuNbr\": \"0\",\n                    \"itemWgt\": 0.0,\n                    \"wtUnitOfMeasure\": \"Lbs\",\n                    \"itemQty\": 1.0,\n                    \"itemTypeCode\": \"STK\",\n                    \"shpdateTime\": \"\",\n                    \"freightType\": null,\n                    \"itemSvcType\": \"RGL\",\n                    \"carrierType\": \"PARCEL\",\n                    \"carrierServiceType\": \"GND\"\n                },\n                {\n                    \"orderLineId\": \"56209a85-7dcf-4c76-a331-449265ed1518\",\n                    \"itemNbr\": \"59983\",\n                    \"modelId\": \"ALLOC-JUSTFORMOM\",\n                    \"vbuNbr\": \"0\",\n                    \"itemWgt\": 0.0,\n                    \"wtUnitOfMeasure\": \"Lbs\",\n                    \"itemQty\": 1.0,\n                    \"itemTypeCode\": \"STK\",\n                    \"shpdateTime\": \"\",\n                    \"freightType\": null,\n                    \"itemSvcType\": \"RGL\",\n                    \"carrierType\": \"PARCEL\",\n                    \"carrierServiceType\": \"ALL\"\n                }\n            ]\n        }\n    ],\n    \"sfCustNum\": null\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/edpshipchrgsrv/enterprise-shippingService/v1/shipping-charge",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"edpshipchrgsrv",
+								"enterprise-shippingService",
+								"v1",
+								"shipping-charge"
+							]
+						},
+						"description": "https://alccccdevapim01.azure-api.net/items/?invClientType=sourcing&itemNumber=100001&offset=0"
+					},
+					"response": []
+				},
+				{
+					"name": "ClearCache",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "ARRAffinity",
+								"value": "e56c4413884e44fa2949035523b026d52af6ee3f783d256e3cbeb42fa95d6022",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "ARRAffinitySameSite",
+								"value": "e56c4413884e44fa2949035523b026d52af6ee3f783d256e3cbeb42fa95d6022",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}{{ITEMS}}/ClearCache",
+							"host": [
+								"{{BaseUrl}}{{ITEMS}}"
+							],
+							"path": [
+								"ClearCache"
+							]
+						},
+						"description": "https://alccccdevapim01.azure-api.net/items/?invClientType=sourcing&itemNumber=100001&offset=0"
+					},
+					"response": []
+				},
+				{
+					"name": "GetPaintProduct",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set('ITEMS', \"/items\");\r",
+									"pm.variables.set('Oun',pm.environment.get(\"Oun\").slice(0,4));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if(pm.collectionVariables.get('ISJSON'))\r",
+									"{\r",
+									"    var json = pm.response.json();\r",
+									"    pm.environment.set(\"temp_ProductId\", json[pm.environment.get(\"itemNumber\")]?.product.omniItemId);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}{{ITEMS}}/GetProductDataForPaint?omniItemId={{itemNumber}}&storeNumber={{Oun}}",
+							"host": [
+								"{{BaseUrl}}{{ITEMS}}"
+							],
+							"path": [
+								"GetProductDataForPaint"
+							],
+							"query": [
+								{
+									"key": "omniItemId",
+									"value": "{{itemNumber}}"
+								},
+								{
+									"key": "storeNumber",
+									"value": "{{Oun}}"
+								}
+							]
+						},
+						"description": "https://alccccdevapim01.azure-api.net/items/?invClientType=sourcing&itemNumber=100001&offset=0"
+					},
+					"response": []
+				},
+				{
+					"name": "GetProductBreadcrumb",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var isLocal = pm.environment.name == \"lowes.ca | local\";\r",
+									"var itemNumber = pm.environment.get(\"itemNumber\");\r",
+									"pm.globals.set('apiurl', (isLocal ? `GetProductBreadcrumb?productId=${itemNumber}` : `products/${itemNumber}/breadcrumb`));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}{{TAXONOMY}}/{{apiurl}}",
+							"host": [
+								"{{BaseUrl}}{{TAXONOMY}}"
+							],
+							"path": [
+								"{{apiurl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetProductPrice",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var isLocal = pm.environment.name == \"lowes.ca | local\";\r",
+									"var itemNumber = pm.environment.get(\"itemNumber\");\r",
+									"var oun = pm.environment.get(\"Oun\");\r",
+									"pm.variables.set('Oun', oun.slice(0,4));\r",
+									"pm.globals.set('apiurl', (isLocal ? \"GetProductPrice\" : \"price\"));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.variables.set('Oun', pm.environment.get(\"Oun\"));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}{{ITEMS}}/{{apiurl}}?itemIds={{itemNumber}}&storeNumber={{Oun}}",
+							"host": [
+								"{{BaseUrl}}{{ITEMS}}"
+							],
+							"path": [
+								"{{apiurl}}"
+							],
+							"query": [
+								{
+									"key": "itemIds",
+									"value": "{{itemNumber}}"
+								},
+								{
+									"key": "storeNumber",
+									"value": "{{Oun}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RelatedProducts",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "store",
+								"value": "{{Oun}}",
+								"type": "text"
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}{{RECOMMENDATIONS}}/RelatedProducts?omniItemId={{itemNumber}}",
+							"host": [
+								"{{BaseUrl}}{{RECOMMENDATIONS}}"
+							],
+							"path": [
+								"RelatedProducts"
+							],
+							"query": [
+								{
+									"key": "omniItemId",
+									"value": "{{itemNumber}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": ".ComBifrost",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-API-VERSION",
+								"value": "v1"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"omniItemIds\": [\n        {\n            \"qty\": 1,\n            \"omniItemId\": \"3033061\"\n        },\n         {\n            \"omniItemId\": \"30412052\",\n            \"qty\": 1\n        }\n    ],\n    \"zipCode\": \"98144\",\n    \"stateCode\": \"WA\",\n    \"countryCode\": \"US\",\n    \"storeNumber\": \"8544\",\n    \"addressType\": \"RA\",\n    \"city\": \"Seattle\",\n    \"customerType\": [\n        \"MILITARY\"\n    ],\n    \"addressLine1\": \"1002 street\",\n    \"invClientType\": \"sourcing\",\n    \"responseGroup\": \"small\",\n    \"clientType\": \"ECC\",\n    \"applyRestriction\": true\n}"
+						},
+						"url": {
+							"raw": "https://stage.carbon.lowes.com/items/",
+							"protocol": "https",
+							"host": [
+								"stage",
+								"carbon",
+								"lowes",
+								"com"
+							],
+							"path": [
+								"items",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": ".CABifrost",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set('ITEMS', \"/items\");\r",
+									"pm.variables.set('Oun',pm.environment.get(\"Oun\").slice(0,4));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if(pm.collectionVariables.get('ISJSON'))\r",
+									"{\r",
+									"    var json = pm.response.json();\r",
+									"    pm.environment.set(\"temp_ProductId\", json[pm.environment.get(\"itemNumber\")]?.product.omniItemId);\r",
+									"    pm.variables.set('Oun',pm.environment.get(\"Oun\"));\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text"
+							},
+							{
+								"key": "referrer",
+								"value": "https://stage.carbon.lowes.com/cartcomp/cart",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"omniItemIds\": [\r\n        {\r\n            \"omniItemId\": \"5637449834\",\r\n            \"qty\": 1,\r\n            \"modelId\": \"sdds\",\r\n            \"vendorNumber\": \"sdfds\"\r\n        },\r\n        {\r\n            \"itemNumber\": \"676803\",\r\n            \"qty\": 1,\r\n            \"modelId\": \"sdds\",\r\n            \"vendorNumber\": \"sdfds\"\r\n        }\r\n    ],\r\n    \"zipCode\": \"L8H 2Y7\",\r\n    \"stateCode\": \"ON\",\r\n    \"countryCode\": \"CAN\",\r\n    \"storeNumber\": \"2413\",\r\n    \"addressType\": \"RA\",\r\n    \"city\": \"Hamilton\",\r\n    \"customerType\": [\r\n        \"REGULAR\"\r\n    ],\r\n    \"addressLine1\": \"1002 street\",\r\n    \"invClientType\": \"sourcing\",\r\n    \"responseGroup\": \"small\",\r\n    \"clientType\": \"ECC\",\r\n    \"applyRestriction\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/bifrost{{ITEMS}}",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"bifrost{{ITEMS}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Content",
+			"item": [
+				{
+					"name": "GlobalAlert",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-token",
+								"type": "text",
+								"value": "{{x-token}}",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"type": "text",
+								"value": "{{SubscriptionKey}}",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"type": "text",
+								"value": "true",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "{{AUTH_TOKEN}}",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"type": "text",
+								"value": "{{Host}}",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}{{GLOBALSETTINGS}}/globalAlert?region=ON",
+							"host": [
+								"{{BaseUrl}}{{GLOBALSETTINGS}}"
+							],
+							"path": [
+								"globalAlert"
+							],
+							"query": [
+								{
+									"key": "region",
+									"value": "ON"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PreprocessGlobalData",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-token",
+								"type": "text",
+								"value": "{{x-token}}",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"type": "text",
+								"value": "{{SubscriptionKey}}",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"type": "text",
+								"value": "true",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "{{AUTH_TOKEN}}",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"type": "text",
+								"value": "{{Host}}",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}{{GLOBALS}}/PreprocessGlobalData",
+							"host": [
+								"{{BaseUrl}}{{GLOBALS}}"
+							],
+							"path": [
+								"PreprocessGlobalData"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ClearCache",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-token",
+								"value": "{{x-token}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": "true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "ARRAffinity",
+								"value": "a90bcfdfa5b4fceed7a57e0e0a8932d032bd5243290e41130fa1da5e119652d2",
+								"type": "text"
+							},
+							{
+								"key": "ARRAffinitySameSite",
+								"value": "a90bcfdfa5b4fceed7a57e0e0a8932d032bd5243290e41130fa1da5e119652d2",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}{{GLOBALS}}/ClearCache",
+							"host": [
+								"{{BaseUrl}}{{GLOBALS}}"
+							],
+							"path": [
+								"ClearCache"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ProductContent",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": "true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}/product/content",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"product",
+								"content"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GlobalMenu",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var isLocal = pm.environment.name == \"lowes.ca | local\";\r",
+									"pm.globals.set('apiurl', (isLocal ? \"menudata\" : \"GlobalMenu\"));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": "true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}{{GLOBALS}}{{TAXONOMY}}/{{apiurl}}",
+							"host": [
+								"{{BaseUrl}}{{GLOBALS}}{{TAXONOMY}}"
+							],
+							"path": [
+								"{{apiurl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetArticles",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": "true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}{{GLOBALS}}/Taxonomy/GetArticles",
+							"host": [
+								"{{BaseUrl}}{{GLOBALS}}"
+							],
+							"path": [
+								"Taxonomy",
+								"GetArticles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetJsonContent",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": "true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}{{GLOBALS}}/GetJsonContent?name=order",
+							"host": [
+								"{{BaseUrl}}{{GLOBALS}}"
+							],
+							"path": [
+								"GetJsonContent"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "order"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Footer",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-token",
+								"value": "{{x-token}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": "true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}{{GLOBALSETTINGS}}/footer",
+							"host": [
+								"{{BaseUrl}}{{GLOBALSETTINGS}}"
+							],
+							"path": [
+								"footer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Header",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}{{GLOBALSETTINGS}}/header",
+							"host": [
+								"{{BaseUrl}}{{GLOBALSETTINGS}}"
+							],
+							"path": [
+								"header"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NewsLetterContent",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}{{GLOBALS}}/NewsLetterContent",
+							"host": [
+								"{{BaseUrl}}{{GLOBALS}}"
+							],
+							"path": [
+								"NewsLetterContent"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createSubscription",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"Test\",\r\n    \"lastName\": \"User\",\r\n    \"email\": \"lowesqta121@epam.com\",\r\n    \"postalCode\": \"L0R 1B8\",\r\n    \"campaignTypes\": [\r\n        {\r\n            \"id\": \"Retail\",\r\n            \"isSubscribed\": true\r\n        },\r\n        {\r\n            \"id\": \"ProductReview\",\r\n            \"isSubscribed\": true\r\n        },\r\n        {\r\n            \"id\": \"Contractor\",\r\n            \"isSubscribed\": true\r\n        }\r\n    ],\r\n    \"eventType\": \"subscribe_enews_catfish_lowes\",\r\n    \"sourceDetail\": \"https://wwwstage.lowesnp.ca\",\r\n    \"clientIpAddress\": \"168.244.176.5\",\r\n    \"origin\": \"footer\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/CreateSubscription",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"CreateSubscription"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Stores",
+			"item": [
+				{
+					"name": "item-availability",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set('Oun',pm.environment.get(\"Oun\").slice(0,4));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.variables.set('Oun',pm.environment.get(\"Oun\"));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "store",
+								"value": "{{Oun}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fullMode\": [\"dlvr-high|dlvr-std\"],\n    \"locationItemData\": [{\n        \"lctNbrs\": [\n            {{Oun}}\n        ],\n        \"items\": [{\n            \"itemNbr\": {{itemNumber}},\n            \"vbuNbr\": 0,\n            \"modID\": \"\"\n        }]\n    }]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}{{ITEM}}/item-availability",
+							"host": [
+								"{{BaseUrl}}{{ITEM}}"
+							],
+							"path": [
+								"item-availability"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "store",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var isLocal = pm.environment.name == \"lowes.ca | local\";\r",
+									"var oun = 3318;//pm.environment.get(\"Oun\").slice(0,4);\r",
+									"pm.globals.set('apiurl', (isLocal ? `GetStoreDetails?storeId=${oun}` : `stores/${oun}`));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/{{apiurl}}",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"{{apiurl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllStores",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var isLocal = pm.environment.name == \"lowes.ca | local\";\r",
+									"pm.globals.set('apiurl', (isLocal ? \"GetAllStores\" : \"stores\"));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"latitude\": \"43.1576\",\r\n    \"longitude\": \"-80.23804\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/{{apiurl}}?maxResults=4&responseGroup=large&query=ALL",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"{{apiurl}}"
+							],
+							"query": [
+								{
+									"key": "maxResults",
+									"value": "4"
+								},
+								{
+									"key": "responseGroup",
+									"value": "large"
+								},
+								{
+									"key": "query",
+									"value": "ALL"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "StoresNearByGET",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var isLocal = pm.environment.name == \"lowes.ca | local\";\r",
+									"pm.globals.set('apiurl', (isLocal ? \"GetNearbyStores\" : \"stores\"));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/{{apiurl}}?query=43.2557206,-79.8711024",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"{{apiurl}}"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "43.2557206,-79.8711024"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ClearCache",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var isLocal = pm.environment.name == \"lowes.ca | local\";\r",
+									"pm.globals.set('apiurl', (isLocal ? `/ClearCache` : `/stores/ClearCache`));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "ARRAffinity",
+								"value": "e56c4413884e44fa2949035523b026d52af6ee3f783d256e3cbeb42fa95d6022",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "ARRAffinitySameSite",
+								"value": "e56c4413884e44fa2949035523b026d52af6ee3f783d256e3cbeb42fa95d6022",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}{{apiurl}}",
+							"host": [
+								"{{BaseUrl}}{{apiurl}}"
+							]
+						},
+						"description": "https://alccccdevapim01.azure-api.net/items/?invClientType=sourcing&itemNumber=100001&offset=0"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "orderHistory",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var orderStatus = { InProgress : 1 };\r",
+									"var json = pm.response.json();\r",
+									"var order = {};\r",
+									"if(json.length > 0){\r",
+									"    // order = json[0].LWS_ORDER_REPO.find(x => x.additional_attributes.min_order_status == orderStatus.InProgress);\r",
+									"    order = json[0].LWS_ORDER_REPO[0];\r",
+									"    pm.environment.set(\"temp_SalesOrderId\", order.order_no);\r",
+									"    pm.environment.set(\"temp_Email\", order.customer_email);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var backDate = new Date();\r",
+									"backDate.setDate(backDate.getDate() - 2);\r",
+									"pm.environment.set(\"today\", new Date().toISOString());\r",
+									"pm.environment.set(\"backDate\", backDate.toISOString());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "store",
+								"value": "{{Oun}}",
+								"type": "text"
+							},
+							{
+								"key": "x-token",
+								"value": "{{x-token}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"customerId\":\"{{temp_customerNumber}}\",\r\n    //\"startDate\":\"{{backDate}}\",\r\n    //\"endDate\":\"{{today}}\",\r\n    \"page\":1,\r\n    \"display\":100,\r\n    \"isRecentOrders\":false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}{{ORDER}}/orderHistory",
+							"host": [
+								"{{BaseUrl}}{{ORDER}}"
+							],
+							"path": [
+								"orderHistory"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "orderDetails",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var json = pm.response.json();\r",
+									"var orderLine = {};\r",
+									"if(json.length > 0){\r",
+									"    orderline = json.orderLine[0];\r",
+									"    pm.environment.set(\"temp_OrderDeliveryMode\", orderline.ship_node.ship_node_person_info.node_id);\r",
+									"    pm.environment.set(\"temp_OrderItemNumber\", orderline.item.item_id);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "store",
+								"value": "{{Oun}}",
+								"type": "text"
+							},
+							{
+								"key": "x-token",
+								"value": "{{x-token}}",
+								"type": "text"
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}{{ORDER}}/getOrderDetails?SalesId=SO-0003694052&Email={{temp_Email}}",
+							"host": [
+								"{{BaseUrl}}{{ORDER}}"
+							],
+							"path": [
+								"getOrderDetails"
+							],
+							"query": [
+								{
+									"key": "SalesId",
+									"value": "SO-0003694052"
+								},
+								{
+									"key": "Email",
+									"value": "{{temp_Email}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CancelOrder",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "store",
+								"value": "{{Oun}}",
+								"type": "text"
+							},
+							{
+								"key": "x-token",
+								"value": "{{x-token}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"SalesOrderId\": \"SO-0003694052\",\r\n    \"CancelOrderItems\": [\r\n        {\r\n            \"DeliveryMode\": \"PARCEL-ON\",\r\n            \"ItemNumber\": \"300302\",\r\n            \"OrderLineNum\": 1,\r\n            \"Message\": null,\r\n            \"Quantity\": 0\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}{{ORDER}}/cancelOrder",
+							"host": [
+								"{{BaseUrl}}{{ORDER}}"
+							],
+							"path": [
+								"cancelOrder"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Solr",
+			"item": [
+				{
+					"name": "SiteCore",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "ARRAffinity",
+								"value": "e56c4413884e44fa2949035523b026d52af6ee3f783d256e3cbeb42fa95d6022",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "ARRAffinitySameSite",
+								"value": "e56c4413884e44fa2949035523b026d52af6ee3f783d256e3cbeb42fa95d6022",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}/solr/sitecore_web_index/select?fl=_uniqueid, promo_text_t,more_details_text_t,_content,products_sm&fq=_language:en-CA&fq=_templates:e6f336329e3d4c2480701d3fa0d95f91&indent=on&q=*:*&rows=10000&wt=json",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"solr",
+								"sitecore_web_index",
+								"select"
+							],
+							"query": [
+								{
+									"key": "fl",
+									"value": "_uniqueid, promo_text_t,more_details_text_t,_content,products_sm"
+								},
+								{
+									"key": "fq",
+									"value": "_language:en-CA"
+								},
+								{
+									"key": "fq",
+									"value": "_templates:e6f336329e3d4c2480701d3fa0d95f91"
+								},
+								{
+									"key": "indent",
+									"value": "on"
+								},
+								{
+									"key": "q",
+									"value": "*:*"
+								},
+								{
+									"key": "rows",
+									"value": "10000"
+								},
+								{
+									"key": "wt",
+									"value": "json"
+								}
+							]
+						},
+						"description": "https://alccccdevapim01.azure-api.net/items/?invClientType=sourcing&itemNumber=100001&offset=0"
+					},
+					"response": []
+				},
+				{
+					"name": "SiteCore Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "ARRAffinity",
+								"value": "e56c4413884e44fa2949035523b026d52af6ee3f783d256e3cbeb42fa95d6022",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "ARRAffinitySameSite",
+								"value": "e56c4413884e44fa2949035523b026d52af6ee3f783d256e3cbeb42fa95d6022",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}/solr/sitecore_web_index/select?fl=_uniqueid, promo_text_t,more_details_text_t,_content,products_sm&fq=_language:en-CA&fq=_templates:e6f336329e3d4c2480701d3fa0d95f91&indent=on&q=*:*&rows=10000&wt=json",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"solr",
+								"sitecore_web_index",
+								"select"
+							],
+							"query": [
+								{
+									"key": "fl",
+									"value": "_uniqueid, promo_text_t,more_details_text_t,_content,products_sm"
+								},
+								{
+									"key": "fq",
+									"value": "_language:en-CA"
+								},
+								{
+									"key": "fq",
+									"value": "_templates:e6f336329e3d4c2480701d3fa0d95f91"
+								},
+								{
+									"key": "indent",
+									"value": "on"
+								},
+								{
+									"key": "q",
+									"value": "*:*"
+								},
+								{
+									"key": "rows",
+									"value": "10000"
+								},
+								{
+									"key": "wt",
+									"value": "json"
+								}
+							]
+						},
+						"description": "https://alccccdevapim01.azure-api.net/items/?invClientType=sourcing&itemNumber=100001&offset=0"
+					},
+					"response": []
+				},
+				{
+					"name": "CommerceProduct",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "ARRAffinity",
+								"value": "e56c4413884e44fa2949035523b026d52af6ee3f783d256e3cbeb42fa95d6022",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "ARRAffinitySameSite",
+								"value": "e56c4413884e44fa2949035523b026d52af6ee3f783d256e3cbeb42fa95d6022",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}/solr/commerce_products_web_index_A/select?fq=_language:en-CA&fq=lw_etl_store_id_s:3201OL&fq=itemnumber_t:997956&indent=on&q=*:*&rows=10&wt=json",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"solr",
+								"commerce_products_web_index_A",
+								"select"
+							],
+							"query": [
+								{
+									"key": "fq",
+									"value": "_language:en-CA"
+								},
+								{
+									"key": "fq",
+									"value": "lw_etl_store_id_s:3201OL"
+								},
+								{
+									"key": "fq",
+									"value": "itemnumber_t:997956"
+								},
+								{
+									"key": "indent",
+									"value": "on"
+								},
+								{
+									"key": "q",
+									"value": "*:*"
+								},
+								{
+									"key": "rows",
+									"value": "10"
+								},
+								{
+									"key": "wt",
+									"value": "json"
+								}
+							]
+						},
+						"description": "https://alccccdevapim01.azure-api.net/items/?invClientType=sourcing&itemNumber=100001&offset=0"
+					},
+					"response": []
+				},
+				{
+					"name": "D365_Price_Inventory",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "ARRAffinity",
+								"value": "e56c4413884e44fa2949035523b026d52af6ee3f783d256e3cbeb42fa95d6022",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "ARRAffinitySameSite",
+								"value": "e56c4413884e44fa2949035523b026d52af6ee3f783d256e3cbeb42fa95d6022",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}/solr/D365_Price_Inventory/select?fq=Store_s:3201OL&fq=SKU_s:997956&indent=on&q=*:*&rows=10&wt=json",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"solr",
+								"D365_Price_Inventory",
+								"select"
+							],
+							"query": [
+								{
+									"key": "fq",
+									"value": "Store_s:3201OL"
+								},
+								{
+									"key": "fq",
+									"value": "SKU_s:997956"
+								},
+								{
+									"key": "indent",
+									"value": "on"
+								},
+								{
+									"key": "q",
+									"value": "*:*"
+								},
+								{
+									"key": "rows",
+									"value": "10"
+								},
+								{
+									"key": "wt",
+									"value": "json"
+								}
+							]
+						},
+						"description": "https://alccccdevapim01.azure-api.net/items/?invClientType=sourcing&itemNumber=100001&offset=0"
+					},
+					"response": []
+				},
+				{
+					"name": "SolrPOST",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Ocp-Apim-Subscription-Key",
+								"value": "{{SubscriptionKey}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Ocp-Apim-Trace",
+								"value": " true",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{AUTH_TOKEN}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "{{Host}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "ARRAffinity",
+								"value": "e56c4413884e44fa2949035523b026d52af6ee3f783d256e3cbeb42fa95d6022",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "ARRAffinitySameSite",
+								"value": "e56c4413884e44fa2949035523b026d52af6ee3f783d256e3cbeb42fa95d6022",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}/itemtest/v2/solr/commerce_products_web_index_A/update?fl=itemnumber_t&fq=_language:en-CA&fq=lw_etl_store_id_s:2413OL&indent=on&q=*:*&rows=57979&wt=json",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"itemtest",
+								"v2",
+								"solr",
+								"commerce_products_web_index_A",
+								"update"
+							],
+							"query": [
+								{
+									"key": "fl",
+									"value": "itemnumber_t"
+								},
+								{
+									"key": "fq",
+									"value": "_language:en-CA"
+								},
+								{
+									"key": "fq",
+									"value": "lw_etl_store_id_s:2413OL"
+								},
+								{
+									"key": "indent",
+									"value": "on"
+								},
+								{
+									"key": "q",
+									"value": "*:*"
+								},
+								{
+									"key": "rows",
+									"value": "57979"
+								},
+								{
+									"key": "wt",
+									"value": "json"
+								}
+							]
+						},
+						"description": "https://alccccdevapim01.azure-api.net/items/?invClientType=sourcing&itemNumber=100001&offset=0"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"function setHeaders(){",
+					"    if(pm.request.url.host[0].includes(\"BaseUrl\")){",
+					"          pm.request.headers.add({key:'Ocp-Apim-Subscription-Key', value:pm.environment.get('SubscriptionKey')});",
+					"          pm.request.headers.add({key:'Ocp-Apim-Trace', value:true});",
+					"          pm.request.headers.add({key:'Authorization', value:pm.collectionVariables.get('AUTH_TOKEN')});",
+					"          pm.request.headers.add({key:'Host', value:pm.environment.get('Host')});",
+					"          pm.request.headers.add({key:'Content-Type', value:'application/json'});",
+					"         pm.request.headers.add({key:\"dtqlws\", value:true});",
+					"        //  if(pm.environment.get('x-token')) pm.request.headers.add({key:'x-token', value:pm.environment.get('x-token')});",
+					"        //   if(pm.environment.get('asc')) pm.request.headers.add({key:'asc', value:pm.environment.get('asc')});",
+					"    }",
+					"}",
+					"",
+					"",
+					"var isPrd = pm.environment.name == \"lowes.ca | prd\";",
+					"var AuthTokenExpiry = pm.collectionVariables.get(isPrd ? 'AUTH_TOKEN_EXPIRY_PR' : 'AUTH_TOKEN_EXPIRY_NPR');",
+					"if(AuthTokenExpiry && AuthTokenExpiry > Date.now() - 3000)",
+					"{",
+					"    var authtoken = pm.collectionVariables.get(isPrd ? 'AUTH_TOKEN_PR' : 'AUTH_TOKEN_NPR');",
+					"    pm.collectionVariables.set('AUTH_TOKEN_NPR', authtoken);",
+					"    setHeaders();",
+					"}",
+					"else",
+					"{",
+					"    var Client_Id = isPrd ? \"b579422d-8981-4c94-be59-2702e6d77ced\" : \"91835788-a86d-4ae9-83af-7472232de274\";",
+					"    var Client_Secret = isPrd ? \"xcSS2zbNakFIwVQt4~L_b_Zb0.Jt7Jc1h4\" : \"2Jt53SEJ5Xk~Ocf7ipEB5.K2N.gG6I5O~s\";",
+					"    var Scope = isPrd ? \"fecd2400-3de8-4ebe-a1fa-a93138ab04f8/.default\" : \"1f79c96a-0d9c-47a4-9341-eabd65045278/.default\";",
+					"    pm.sendRequest(",
+					"   {",
+					"        \"url\": 'https://login.microsoftonline.com/f0f705ff-3d3e-4c24-854c-6d0b20b2b10c/oauth2/v2.0/token',",
+					"        \"method\": 'POST',",
+					"        \"body\": {",
+					"            \"mode\": 'raw',",
+					"            \"raw\":",
+					"                 'client_id='+Client_Id+",
+					"                 '&client_secret='+Client_Secret+",
+					"                 '&scope='+Scope+",
+					"                '&grant_type=client_credentials'",
+					"        },",
+					"        \"header\": {",
+					"            'Content-Type': 'application/x-www-form-urlencoded',",
+					"            \"dtqlws\": true,",
+					"        }",
+					"   }",
+					"   , function (err, response) {",
+					"        var resp = response.json();",
+					"        pm.collectionVariables.set(isPrd ? 'AUTH_TOKEN_EXPIRY_PR' : 'AUTH_TOKEN_EXPIRY_NPR', Date.now() + (resp.expires_in * 1000));",
+					"        pm.collectionVariables.set(isPrd ?'AUTH_TOKEN_PR' : 'AUTH_TOKEN_NPR', resp.access_token);",
+					"        pm.collectionVariables.set('AUTH_TOKEN', resp.access_token);",
+					"        setHeaders();",
+					"    });",
+					"}",
+					"",
+					"",
+					"var isLocal = pm.environment.name == \"lowes.ca | local\";",
+					"",
+					"//APIs",
+					"pm.collectionVariables.set('BACKINSTOCK',!isLocal ? \"/backinstock\" : \"\");",
+					"pm.collectionVariables.set('CACHESEARCH',!isLocal ? \"/cacheSearch\" : \"\");",
+					"pm.collectionVariables.set('CACHESTORES',!isLocal ? \"/cachestores\" : \"\");",
+					"pm.collectionVariables.set('CART',!isLocal ? \"/cart\" : \"\");",
+					"pm.collectionVariables.set('CARTCOMP',!isLocal ? \"/cartcomp\" : \"\");",
+					"pm.collectionVariables.set('CARTITEMCOMP',!isLocal ? \"/cartitemcomp\" : \"\");",
+					"pm.collectionVariables.set('CARTS',!isLocal ? \"/carts\" : \"\");",
+					"pm.collectionVariables.set('CONTENT',!isLocal ? \"/content\" : \"\");",
+					"pm.collectionVariables.set('GLOBALSETTINGS',!isLocal ? \"/globals/Settings\" : \"\");",
+					"pm.collectionVariables.set('GLOBALS',!isLocal ? \"/globals\" : \"\");",
+					"pm.collectionVariables.set('ITEM',!isLocal ? \"/item\" : \"\");",
+					"pm.collectionVariables.set('ITEMS',!isLocal ? \"/items\" : \"\");",
+					"pm.collectionVariables.set('ORDER',!isLocal ? \"/order\" : \"\");",
+					"pm.collectionVariables.set('PRODUCT',!isLocal ? \"/product\" : \"\");",
+					"pm.collectionVariables.set('RECOMMENDATIONS',!isLocal ? \"/recommendations\" : \"\");",
+					"pm.collectionVariables.set('SEARCH',!isLocal ? \"/search\" : \"\");",
+					"pm.collectionVariables.set('STORES',!isLocal ? \"/stores\" : \"\");",
+					"pm.collectionVariables.set('TAXONOMY',!isLocal ? \"/taxonomy\" : \"\");",
+					"pm.collectionVariables.set('USER',!isLocal ? \"/user\" : \"\");",
+					"pm.collectionVariables.set('USERLIST',!isLocal ? \"/userlist\" : \"\");",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"//Unit tests",
+					"var isJson = true ;",
+					"pm.test(\"Is response is json?\", function () {",
+					"    try{ ",
+					"        var json = JSON.parse(pm.response.text()); ",
+					"        isJson = json.statusCode != undefined && json.statusCode == 404 ? false : true;",
+					"    }",
+					"    catch (err) { isJson = false; }",
+					"    pm.expect(isJson, \"Response must be json\").to.equal(true);",
+					"});",
+					"pm.test(\"Was this a successful request?\", function () {",
+					"    pm.expect(pm.response.code, \"Should be 200 but received \" + pm.response.code).to.equal(200);",
+					"});",
+					"pm.test(\"Is body length is greater than 2?\", function () {",
+					"    pm.expect(pm.response.text().length, \"Response body shouldn't be empty\").to.greaterThan(2);",
+					"});",
+					"pm.collectionVariables.set('ISJSON',isJson);"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BACKINSTOCK",
+			"value": ""
+		},
+		{
+			"key": "CACHESEARCH",
+			"value": ""
+		},
+		{
+			"key": "CACHESTORES",
+			"value": ""
+		},
+		{
+			"key": "CART",
+			"value": ""
+		},
+		{
+			"key": "CARTCOMP",
+			"value": ""
+		},
+		{
+			"key": "CARTITEMCOMP",
+			"value": ""
+		},
+		{
+			"key": "CARTS",
+			"value": ""
+		},
+		{
+			"key": "CONTENT",
+			"value": ""
+		},
+		{
+			"key": "GLOBALSETTINGS",
+			"value": ""
+		},
+		{
+			"key": "GLOBALS",
+			"value": ""
+		},
+		{
+			"key": "ITEM",
+			"value": ""
+		},
+		{
+			"key": "ITEMS",
+			"value": ""
+		},
+		{
+			"key": "ORDER",
+			"value": ""
+		},
+		{
+			"key": "PRODUCT",
+			"value": ""
+		},
+		{
+			"key": "RECOMMENDATIONS",
+			"value": ""
+		},
+		{
+			"key": "SEARCH",
+			"value": ""
+		},
+		{
+			"key": "STORES",
+			"value": ""
+		},
+		{
+			"key": "TAXONOMY",
+			"value": ""
+		},
+		{
+			"key": "USER",
+			"value": ""
+		},
+		{
+			"key": "USERLIST",
+			"value": ""
+		},
+		{
+			"key": "ISJSON",
+			"value": ""
+		},
+		{
+			"key": "AUTH_TOKEN_EXPIRY_PR",
+			"value": ""
+		},
+		{
+			"key": "AUTH_TOKEN_PR",
+			"value": ""
+		},
+		{
+			"key": "AUTH_TOKEN",
+			"value": ""
+		},
+		{
+			"key": "AUTH_TOKEN_NPR",
+			"value": ""
+		},
+		{
+			"key": "AUTH_TOKEN_EXPIRY_NPR",
+			"value": ""
+		}
+	]
+}
